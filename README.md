@@ -21,3 +21,8 @@ La lògica del mètode logIn l'he adaptat de https://dzone.com/articles/how-to-i
 M'he quedat fent el login a la classe controller. Contacta amb el servidor, però me diu que el login falla perquè no li pas els paràmetres.
 He hagut d'utilitzar el mètode que ens ha passat en Tomeu per permetre connexions síncrones al main thread. 
 
+
+26/02/19
+Ja fa login. He fet un mètode específic pel login a la classe controller que potser se podría reconvertir per fer tots els POST.
+El bucle del login l'estic fent a l'onactivityresult de la main activity en rebre la resposta de l'activitat Login.
+Per tractar les respostes de servidor faig servir JSONobjects
