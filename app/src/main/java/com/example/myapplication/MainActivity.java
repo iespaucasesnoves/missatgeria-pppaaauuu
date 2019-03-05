@@ -5,13 +5,20 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     private Preferencies pref;
+    private ListView lv;
     final int CLAULOGIN = 2;
+    private ArrayList<Missatge> missatges;
     JSONObject jslogin = null;
 
     @Override
@@ -19,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pref = new Preferencies(this);
+        lv = findViewById(R.id.llista);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         String login = Controller.logIn(pref.getUser(), pref.getPassword());
@@ -28,10 +36,13 @@ public class MainActivity extends AppCompatActivity {
                 Intent inte = new Intent(this, Login.class);
                 inte.putExtra("nom", pref.getUser());
                 startActivityForResult(inte, CLAULOGIN);
+            }else{
+                mostraMissatges();
             }
         }catch(JSONException e){
             Log.d("DEVPAU", e.getMessage());
         }
+
     }
 
     @Override
@@ -53,10 +64,26 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(inte, CLAULOGIN);
             }else{
                 pref.setToken(jslogin.get("token").toString());
+                mostraMissatges();
             }
         }catch(JSONException e){
             Log.d("DEVPAU", e.getMessage());
         }
+    }
+
+    public void mostraMissatges(){
+        Controller.carregaMsgs(pref.getCodiusuari());
+        DataSourceMsg dataSource = new DataSourceMsg(this);
+        try {
+            dataSource.open();
+            missatges = dataSource.getAllMsg();
+            ArrayAdapter<Missatge> adap = new MissatgeArrayAdapter(this, R.layout.missatge_a_llista, missatges);
+            lv.setAdapter(adap);
+            dataSource.close();
+        }catch(SQLException e){
+            Log.d("DEVPAU", e.getMessage());
+        }
+
     }
 
 

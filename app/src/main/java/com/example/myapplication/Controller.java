@@ -2,6 +2,9 @@ package com.example.myapplication;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -72,6 +75,50 @@ public class Controller {
             result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
         }
         return result.toString();
+    }
+
+    public static JSONObject carregaMsgs(int clau){
+        try {
+            HashMap<String, String> claus = new HashMap<>();
+            claus.put("id", Integer.toString(clau));
+            String crida = montaParametres(claus);
+            URL obj = new URL("https://iesmantpc.000webhostapp.com/public/missatge/");
+            HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
+            postConnection.setRequestMethod("POST");
+            postConnection.setDoOutput(true);
+            postConnection.setReadTimeout(15000);
+            postConnection.setConnectTimeout(25000);
+            postConnection.setDoInput(true);
+            OutputStream os = postConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(crida);
+            writer.flush();
+            writer.close();
+            int responseCode = postConnection.getResponseCode();
+            Log.d("DEVPAU", "POST Response Code :  " + responseCode);
+            Log.d("DEVPAU", "POST Response Message : " + postConnection.getResponseMessage());
+            if (responseCode == HttpURLConnection.HTTP_OK) { //success
+                BufferedReader in = new BufferedReader(new InputStreamReader(postConnection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                Log.d("DEVPAU", response.toString());
+                try {
+
+                    return new JSONObject(response.toString());
+                }catch(JSONException e){
+                    Log.d("DEVPAU", e.getMessage());
+                }
+            } else {
+                Log.d("DEVPAU", "POST NOT WORKED");
+            }
+        }catch(IOException e){
+            Log.d("DEVPAU", e.getMessage());
+        }
+        return null;
     }
 
 }

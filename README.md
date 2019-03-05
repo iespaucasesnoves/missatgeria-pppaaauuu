@@ -26,3 +26,11 @@ He hagut d'utilitzar el mètode que ens ha passat en Tomeu per permetre connexio
 Ja fa login. He fet un mètode específic pel login a la classe controller que potser se podría reconvertir per fer tots els POST.
 El bucle del login l'estic fent a l'onactivityresult de la main activity en rebre la resposta de l'activitat Login.
 Per tractar les respostes de servidor faig servir JSONobjects
+
+05/03/19
+He creat la classe missatge, que té un camp més que la taula de base de dades per guardar el nom de l'autor del missatge. Quan es carrega un ingredient de la base de dades, es crida a la taula d'usuaris amb la fk que conté. 
+També he creat la classe datasource i l'array adapter.
+A la classe controller estic fent el métode per rebre els nous missatges del servidor. Encara no se si funciona. En qualsevol cas, tal com está ara la lógica, hauria d'enviar els misstges marcats amb pendent abans de rebre els missatges nous. Si finalment faig servir la taula pendents pels missatges sortints, podría fer aquests dos processos independents.
+
+
+https://iesmantpc.000webhostapp.com/public/ajuda/
