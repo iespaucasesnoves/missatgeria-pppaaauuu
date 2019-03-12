@@ -45,7 +45,7 @@ public class Preferencies {
         SharedPreferences.Editor editor = this.prefs.edit();
         editor.putString(CLAU_USER,user);
         editor.commit();
-        Log.d("DEVPAU", "User saved in preferences");
+        Log.d("DEVPAU", "User saved in preferences " + user);
     }
 
     public String getPassword() {

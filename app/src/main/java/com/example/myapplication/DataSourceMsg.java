@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -39,7 +40,7 @@ public class DataSourceMsg {
         dbAjuda.close();
     }
 
-    public Missatge createIng(Missatge msg){
+    public Missatge createMsg(Missatge msg){
         ContentValues values = new ContentValues();
         values.put(HelperQuepassaeh.COLUMN_MSG,          msg.getMsg());
         values.put(HelperQuepassaeh.COLUMN_DATAHORA,     msg.getDatahora());
@@ -67,7 +68,7 @@ public class DataSourceMsg {
 
     public ArrayList<Missatge> getAllMsg(){
         ArrayList<Missatge> msgs = new ArrayList<Missatge>();
-        Cursor cursor = database.query(HelperQuepassaeh.TABLE_MISSATGE, allColumnsMsg, null, null, null, null, HelperQuepassaeh.COLUMN_CODI + " DES");
+        Cursor cursor = database.query(HelperQuepassaeh.TABLE_MISSATGE, allColumnsMsg, null, null, null, null, HelperQuepassaeh.COLUMN_CODI + " DESC");
         cursor.moveToFirst();
         while(!cursor.isAfterLast()){
             Missatge msg = getMsg(cursor.getInt(0));
@@ -75,6 +76,27 @@ public class DataSourceMsg {
             cursor.moveToNext();
         }
         cursor.close();
+        return msgs;
+    }
+
+    public ArrayList<Missatge> getAllPdt(){
+        ArrayList<Missatge> msgs = new ArrayList<Missatge>();
+        try {
+            open();
+
+            Cursor cursor = database.query(HelperQuepassaeh.TABLE_MISSATGE, allColumnsMsg, HelperQuepassaeh.COLUMN_PENDENT + " = 1", null, null, null, HelperQuepassaeh.COLUMN_DATAHORA + " DESC");
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Missatge msg = getMsg(cursor.getInt(0));
+                msgs.add(msg);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            database.delete(HelperQuepassaeh.TABLE_MISSATGE, HelperQuepassaeh.COLUMN_PENDENT + " = ?", new String[]{"1"});
+            close();
+        }catch(Exception e){
+            Log.d("DEVPAU", e.getMessage());
+        }
         return msgs;
     }
 
@@ -90,15 +112,21 @@ public class DataSourceMsg {
     }
 
     public String getUser(long id){
-        String msg;
-        Cursor cursor = database.query(HelperQuepassaeh.TABLE_USUARI, allColumnsUser, HelperQuepassaeh.COLUMN_CODIUSUARI + '=' + id, null, null, null, null );
-        if(cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            msg = cursor.getString(1);
-        }else{
-            msg = "Usuari desconegut";
+        String msg = "";
+        try {
+
+            open();
+            Cursor cursor = database.query(HelperQuepassaeh.TABLE_USUARI, allColumnsUser, HelperQuepassaeh.COLUMN_CODIUSUARI + '=' + id, null, null, null, null);
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                msg = cursor.getString(1);
+            } else {
+                msg = "Usuari desconegut";
+            }
+            cursor.close();
+        }catch(Exception e){
+            Log.d("DEVPAU", e.getMessage());
         }
-        cursor.close();
         return msg;
     }
 

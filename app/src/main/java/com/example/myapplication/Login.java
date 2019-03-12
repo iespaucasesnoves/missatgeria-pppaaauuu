@@ -23,9 +23,9 @@ String nom, pass;
         setContentView(R.layout.activity_login);
 
         but = findViewById(R.id.button);
-        etnom = findViewById(R.id.editText);
+        etnom = findViewById(R.id.editText2);
         etnom.setText(nom);
-        etpass = findViewById(R.id.editText2);
+        etpass = findViewById(R.id.editText);
         but.setOnClickListener(this);
     }
 

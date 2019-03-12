@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,6 +120,49 @@ public class Controller {
             Log.d("DEVPAU", e.getMessage());
         }
         return null;
+    }
+
+    public static void enviar(ArrayList<Missatge> missatges, int codiusr, String token){
+        for(int i = 0; i < missatges.size(); i++) {
+            try {
+                HashMap<String, String> claus = new HashMap<>();
+                claus.put("msg", missatges.get(i).getMsg());
+                claus.put("codiusuari", Integer.toString(codiusr));
+                String crida = montaParametres(claus);
+                URL obj = new URL("http://iesmantpc.000webhostapp.com/public/missatge/");
+                HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
+                postConnection.setRequestMethod("POST");
+                postConnection.setRequestProperty("Authorization", token);
+                postConnection.setDoOutput(true);
+                postConnection.setReadTimeout(15000);
+                postConnection.setConnectTimeout(25000);
+                postConnection.setDoInput(true);
+                OutputStream os = postConnection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(crida);
+                writer.flush();
+                writer.close();
+                int responseCode = postConnection.getResponseCode();
+                Log.d("DEVPAU", "POST Response Code :  " + responseCode);
+                Log.d("DEVPAU", "POST Response Message : " + postConnection.getResponseMessage());
+                if (responseCode == HttpURLConnection.HTTP_OK) { //success
+                    BufferedReader in = new BufferedReader(new InputStreamReader(postConnection.getInputStream()));
+                    String inputLine;
+                    StringBuffer response = new StringBuffer();
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+                    Log.d("DEVPAU", response.toString());
+
+                } else {
+                    Log.d("DEVPAU", "POST NOT WORKED");
+                }
+            } catch (IOException e) {
+                Log.d("DEVPAU", e.getMessage());
+            }
+        }
+
     }
 
 }

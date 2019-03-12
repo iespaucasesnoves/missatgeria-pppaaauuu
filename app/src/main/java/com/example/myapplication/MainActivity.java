@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         String login = Controller.logIn(pref.getUser(), pref.getPassword());
         try{
             jslogin = new JSONObject(login);
-            if(jslogin.get("correcta").equals("false")) {
+            if(jslogin == null ||  jslogin.get("correcta").equals("false")) {
                 Intent inte = new Intent(this, Login.class);
                 inte.putExtra("nom", pref.getUser());
                 startActivityForResult(inte, CLAULOGIN);
@@ -41,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }catch(JSONException e){
             Log.d("DEVPAU", e.getMessage());
+        }catch(Exception e){
+            Log.d("DEVPAU", e.getMessage());
+            Intent inte = new Intent(this, Login.class);
+            inte.putExtra("nom", pref.getUser());
+            startActivityForResult(inte, CLAULOGIN);
         }
 
     }
@@ -61,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
             jslogin = new JSONObject(login);
             if(jslogin.get("correcta").equals("false")){
                 Intent inte = new Intent(this, Login.class);
+                inte.putExtra("nom", pref.getUser());
                 startActivityForResult(inte, CLAULOGIN);
             }else{
                 pref.setToken(jslogin.get("token").toString());
@@ -72,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void mostraMissatges(){
+        enviarMissatges();
+
         Controller.carregaMsgs(pref.getCodiusuari());
         DataSourceMsg dataSource = new DataSourceMsg(this);
         try {
@@ -85,6 +93,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    public void enviarMissatges(){
+        DataSourceMsg dataSource = new DataSourceMsg(this);
+        ArrayList<Missatge> pendents = new ArrayList<>();
+        pendents = dataSource.getAllPdt();
+        if(pendents != null && pendents.size() > 0)
+        Controller.enviar(missatges, pref.getCodiusuari(), pref.getToken());
+    }
+
+
 
 
 
