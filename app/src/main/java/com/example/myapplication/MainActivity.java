@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 inte.putExtra("nom", pref.getUser());
                 startActivityForResult(inte, CLAULOGIN);
             }else{
+                pref.setToken(jslogin.get("token").toString());
                 mostraMissatges();
             }
         }catch(JSONException e){
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     public void mostraMissatges(){
         enviarMissatges();
 
-        Controller.carregaMsgs(pref.getCodiusuari());
+        Controller.carregaMsgs(pref.getCodiusuari(), pref.getToken());
         DataSourceMsg dataSource = new DataSourceMsg(this);
         try {
             dataSource.open();

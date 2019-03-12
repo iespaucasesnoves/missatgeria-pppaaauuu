@@ -32,5 +32,16 @@ He creat la classe missatge, que té un camp més que la taula de base de dades 
 També he creat la classe datasource i l'array adapter.
 A la classe controller estic fent el métode per rebre els nous missatges del servidor. Encara no se si funciona. En qualsevol cas, tal com está ara la lógica, hauria d'enviar els misstges marcats amb pendent abans de rebre els missatges nous. Si finalment faig servir la taula pendents pels missatges sortints, podría fer aquests dos processos independents.
 
+12/03
+He fet la lógica per enviar els missatges sortint abans de recuperar els del servidor. 
+Ara tenc problemes amb el token a l'hora de descarregar els missatges. 
+Un pic arregli això, crec que només me quedará el métode per crear un missatge sortint.
+Amb això cobriria lo bàsic.
+Altres coses que voldria fer:
+Afegir imatge de usuaris
+Permetre filtrar els missatges per usuari
+Separar la taula de missatges guardats i la bustia de sortida
+
+
 
 https://iesmantpc.000webhostapp.com/public/ajuda/

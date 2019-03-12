@@ -78,7 +78,7 @@ public class Controller {
         return result.toString();
     }
 
-    public static JSONObject carregaMsgs(int clau){
+    public static JSONObject carregaMsgs(int clau, String token){
         try {
             HashMap<String, String> claus = new HashMap<>();
             claus.put("id", Integer.toString(clau));
@@ -86,6 +86,7 @@ public class Controller {
             URL obj = new URL("https://iesmantpc.000webhostapp.com/public/missatge/");
             HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
             postConnection.setRequestMethod("POST");
+            postConnection.setRequestProperty("Authorization", token);
             postConnection.setDoOutput(true);
             postConnection.setReadTimeout(15000);
             postConnection.setConnectTimeout(25000);
