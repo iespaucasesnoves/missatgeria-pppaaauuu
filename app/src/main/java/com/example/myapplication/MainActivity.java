@@ -77,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager)getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(et.getWindowToken(), 0);
-                Boolean flag = introduirMissatge(et.getText().toString());
+                Boolean flag = false;
+                if(et.getText().toString()!=null && et.getText().toString().length() > 0) flag = introduirMissatge(et.getText().toString());
                 if(!flag){
                     Toast toast = Toast.makeText(getApplicationContext(), "No s'ha pogut enviar", Toast.LENGTH_SHORT);
                     toast.show();
