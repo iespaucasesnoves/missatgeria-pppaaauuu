@@ -37,11 +37,15 @@ public class MainActivity extends AppCompatActivity {
                 inte.putExtra("nom", pref.getUser());
                 startActivityForResult(inte, CLAULOGIN);
             }else{
-                pref.setToken(jslogin.get("token").toString());
+
+                JSONObject tok = new JSONObject(jslogin.get("dades").toString());
+                int codi = tok.getInt("codiusuari");
+                Log.d("DEVPAU", "Codiusuari de JSON " + codi);
+                Log.d("DEVPAU", "Codiusuari de prefs " + pref.getCodiusuari());
+                pref.setCodiusuari(codi);
+                pref.setToken(tok.get("token").toString());
                 mostraMissatges();
             }
-        }catch(JSONException e){
-            Log.d("DEVPAU", e.getMessage());
         }catch(Exception e){
             Log.d("DEVPAU", e.getMessage());
             Intent inte = new Intent(this, Login.class);
@@ -70,7 +74,13 @@ public class MainActivity extends AppCompatActivity {
                 inte.putExtra("nom", pref.getUser());
                 startActivityForResult(inte, CLAULOGIN);
             }else{
-                pref.setToken(jslogin.get("token").toString());
+
+                JSONObject tok = new JSONObject(jslogin.get("dades").toString());
+                int codi = tok.getInt("codiusuari");
+                Log.d("DEVPAU", "Codiusuari de JSON " + codi);
+                Log.d("DEVPAU", "Codiusuari de prefs " + pref.getCodiusuari());
+                pref.setCodiusuari(codi);
+                pref.setToken(tok.get("token").toString());
                 mostraMissatges();
             }
         }catch(JSONException e){
@@ -80,25 +90,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void mostraMissatges(){
         enviarMissatges();
-
-        Controller.carregaMsgs(pref.getCodiusuari(), pref.getToken());
+        JSONObject msgs = Controller.carregaMsgs(pref.getCodiusuari(), pref.getToken());
         DataSourceMsg dataSource = new DataSourceMsg(this);
+        Log.d("mostraMissatge DEVPAU  ", dataSource.afegirMsgs(msgs)+ "missatges afegits");
+
         try {
             dataSource.open();
             missatges = dataSource.getAllMsg();
             ArrayAdapter<Missatge> adap = new MissatgeArrayAdapter(this, R.layout.missatge_a_llista, missatges);
             lv.setAdapter(adap);
             dataSource.close();
+            Log.d("mostraMissatges DEVPAU", "carregada listview");
         }catch(SQLException e){
-            Log.d("DEVPAU", e.getMessage());
+            Log.d("mostraMissatges DEVPAU", e.getMessage());
         }
-
     }
 
     public void enviarMissatges(){
         DataSourceMsg dataSource = new DataSourceMsg(this);
-        ArrayList<Missatge> pendents = new ArrayList<>();
-        pendents = dataSource.getAllPdt();
+        ArrayList<Missatge> pendents = dataSource.getAllPdt();
         if(pendents != null && pendents.size() > 0)
         Controller.enviar(missatges, pref.getCodiusuari(), pref.getToken());
     }

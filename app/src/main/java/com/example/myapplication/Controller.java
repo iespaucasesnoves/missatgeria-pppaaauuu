@@ -1,7 +1,9 @@
 package com.example.myapplication;
 
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +58,7 @@ public class Controller {
             } else {
                 Log.d("DEVPAU", "POST NOT WORKED");
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             Log.d("DEVPAU", e.getMessage());
         }
         return "";
@@ -66,39 +69,41 @@ public class Controller {
         // clau1=valor1&clau2=valor2&...
         StringBuilder result = new StringBuilder();
         boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
+        for (Map.Entry<String, String> entry : params.entrySet()) {
             if (first) {
                 first = false;
             } else {
                 result.append("&");
-            }result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            }
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
             result.append("=");
             result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
         }
         return result.toString();
     }
 
-    public static JSONObject carregaMsgs(int clau, String token){
+    public static JSONObject carregaMsgs(int clau, String token) {
         try {
-            HashMap<String, String> claus = new HashMap<>();
-            claus.put("id", Integer.toString(clau));
-            String crida = montaParametres(claus);
-            URL obj = new URL("https://iesmantpc.000webhostapp.com/public/missatge/");
+            //HashMap<String, String> claus = new HashMap<>();
+            //claus.put("codiusuari", Integer.toString(clau));
+
+            //String crida = montaParametres(claus);
+            URL obj = new URL("https://iesmantpc.000webhostapp.com/public/provamissatge/");
             HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
-            postConnection.setRequestMethod("POST");
-            postConnection.setRequestProperty("Authorization", token);
-            postConnection.setDoOutput(true);
-            postConnection.setReadTimeout(15000);
-            postConnection.setConnectTimeout(25000);
-            postConnection.setDoInput(true);
-            OutputStream os = postConnection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(crida);
-            writer.flush();
-            writer.close();
+            //postConnection.setRequestMethod("GET");
+            //postConnection.setRequestProperty("Authorization", token);
+            //postConnection.setDoOutput(true);
+            //postConnection.setReadTimeout(15000);
+            //postConnection.setConnectTimeout(25000);
+            //postConnection.setDoInput(true);
+            //OutputStream os = postConnection.getOutputStream();
+            //BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            //writer.write(crida);
+            //writer.flush();
+            //writer.close();
             int responseCode = postConnection.getResponseCode();
-            Log.d("DEVPAU", "POST Response Code :  " + responseCode);
-            Log.d("DEVPAU", "POST Response Message : " + postConnection.getResponseMessage());
+            Log.d("Carregar DEVPAU", "GET Response Code :  " + responseCode);
+            Log.d("Carregar DEVPAU", "GET Response Message : " + postConnection.getResponseMessage());
             if (responseCode == HttpURLConnection.HTTP_OK) { //success
                 BufferedReader in = new BufferedReader(new InputStreamReader(postConnection.getInputStream()));
                 String inputLine;
@@ -107,24 +112,24 @@ public class Controller {
                     response.append(inputLine);
                 }
                 in.close();
-                Log.d("DEVPAU", response.toString());
+                Log.d("Carregar DEVPAU", response.toString());
                 try {
 
                     return new JSONObject(response.toString());
-                }catch(JSONException e){
-                    Log.d("DEVPAU", e.getMessage());
+                } catch (JSONException e) {
+                    Log.d("Carregar DEVPAU", e.getMessage());
                 }
             } else {
-                Log.d("DEVPAU", "POST NOT WORKED");
+                Log.d("Carregar DEVPAU", "GET NOT WORKED");
             }
-        }catch(IOException e){
-            Log.d("DEVPAU", e.getMessage());
+        } catch (IOException e) {
+            Log.d("Carregar DEVPAU", e.getMessage());
         }
         return null;
     }
 
-    public static void enviar(ArrayList<Missatge> missatges, int codiusr, String token){
-        for(int i = 0; i < missatges.size(); i++) {
+    public static void enviar(ArrayList<Missatge> missatges, int codiusr, String token) {
+        for (int i = 0; i < missatges.size(); i++) {
             try {
                 HashMap<String, String> claus = new HashMap<>();
                 claus.put("msg", missatges.get(i).getMsg());
@@ -144,8 +149,8 @@ public class Controller {
                 writer.flush();
                 writer.close();
                 int responseCode = postConnection.getResponseCode();
-                Log.d("DEVPAU", "POST Response Code :  " + responseCode);
-                Log.d("DEVPAU", "POST Response Message : " + postConnection.getResponseMessage());
+                Log.d("Enviar DEVPAU", "POST Response Code :  " + responseCode);
+                Log.d("Enviar DEVPAU", "POST Response Message : " + postConnection.getResponseMessage());
                 if (responseCode == HttpURLConnection.HTTP_OK) { //success
                     BufferedReader in = new BufferedReader(new InputStreamReader(postConnection.getInputStream()));
                     String inputLine;
@@ -154,16 +159,15 @@ public class Controller {
                         response.append(inputLine);
                     }
                     in.close();
-                    Log.d("DEVPAU", response.toString());
+                    Log.d("Enviar DEVPAU", response.toString());
 
                 } else {
-                    Log.d("DEVPAU", "POST NOT WORKED");
+                    Log.d("Enviar DEVPAU", "POST NOT WORKED");
                 }
             } catch (IOException e) {
-                Log.d("DEVPAU", e.getMessage());
+                Log.d("Enviar DEVPAU", e.getMessage());
             }
         }
 
     }
-
 }

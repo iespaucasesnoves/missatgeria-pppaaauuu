@@ -42,6 +42,14 @@ Afegir imatge de usuaris
 Permetre filtrar els missatges per usuari
 Separar la taula de missatges guardats i la bustia de sortida
 
+14/03
+He escrit el métode afegirmsgs de datasource
+Reb el JSON del métode controller.carregamsgs a traves de mainactivity.mostramissatges
+Carrega la listview pero se queda travada
+Creada la lògica a datasource per introduir usuaris 
+Ya carrega el nom d'usuari a listview 
+vaig a fer la part d'UI d'enviar missatge
+
 
 
 https://iesmantpc.000webhostapp.com/public/ajuda/

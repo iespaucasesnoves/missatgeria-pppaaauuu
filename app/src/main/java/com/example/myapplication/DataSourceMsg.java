@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
@@ -42,14 +43,27 @@ public class DataSourceMsg {
 
     public Missatge createMsg(Missatge msg){
         ContentValues values = new ContentValues();
-        values.put(HelperQuepassaeh.COLUMN_MSG,          msg.getMsg());
-        values.put(HelperQuepassaeh.COLUMN_DATAHORA,     msg.getDatahora());
-        values.put(HelperQuepassaeh.COLUMN_FKCODIUSUARI, msg.getFkuser());
-        values.put(HelperQuepassaeh.COLUMN_PENDENT,      msg.getPendent());
+        if(msg.getCodi() < 0) {
+            values.put(HelperQuepassaeh.COLUMN_MSG, msg.getMsg());
+            values.put(HelperQuepassaeh.COLUMN_DATAHORA, msg.getDatahora());
+            values.put(HelperQuepassaeh.COLUMN_FKCODIUSUARI, msg.getFkuser());
+            values.put(HelperQuepassaeh.COLUMN_PENDENT, msg.getPendent());
 
-        long insertId = database.insert(HelperQuepassaeh.TABLE_MISSATGE,null,values);
-        msg.setCodi((int)insertId);
-        return msg;
+            long insertId = database.insert(HelperQuepassaeh.TABLE_MISSATGE, null, values);
+            msg.setCodi((int) insertId);
+            return msg;
+        }else{
+            String text = msg.getMsg();
+            if(text != null )
+            values.put(HelperQuepassaeh.COLUMN_MSG, msg.getMsg());
+            values.put(HelperQuepassaeh.COLUMN_CODI, msg.getCodi());
+            values.put(HelperQuepassaeh.COLUMN_DATAHORA, msg.getDatahora());
+            values.put(HelperQuepassaeh.COLUMN_FKCODIUSUARI, msg.getFkuser());
+            values.put(HelperQuepassaeh.COLUMN_PENDENT, msg.getPendent());
+            Long insert = database.insert(HelperQuepassaeh.TABLE_MISSATGE, null, values);
+            Log.d("createmsg DEVPAU  ", insert.toString());
+            return msg;
+        }
     }
 
     public Missatge getMsg(long id){
@@ -111,6 +125,16 @@ public class DataSourceMsg {
         return msg;
     }
 
+    public Boolean createUser(Missatge msg, String nom) {
+        ContentValues values = new ContentValues();
+        values.put(HelperQuepassaeh.COLUMN_CODIUSUARI, msg.getFkuser());
+        values.put(HelperQuepassaeh.COLUMN_NOM, nom);
+        values.put(HelperQuepassaeh.COLUMN_EMAIL, "email no implementat");
+        values.put(HelperQuepassaeh.COLUMN_FOTO, "foto no implementat");
+        long insertId = database.insert(HelperQuepassaeh.TABLE_USUARI, null, values);
+        return insertId > 0;
+    }
+
     public String getUser(long id){
         String msg = "";
         try {
@@ -132,7 +156,30 @@ public class DataSourceMsg {
 
     public int afegirMsgs(JSONObject msgs){
         int contador = 0;
+        try{
+            JSONArray dades = new JSONArray(msgs.get("dades").toString());
+            for(int i = 0; i < dades.length(); i++){
+                JSONObject msgjson = dades.getJSONObject(i);
+                int codi = msgjson.getInt("codi");
+                String text = msgjson.get("msg").toString();
+                String datahora = msgjson.get("datahora").toString();
+                int codiusuari = msgjson.getInt("codiusuari");
+                String nom = msgjson.get("nom").toString();
+                Missatge msg = new Missatge(codi, text, datahora, codiusuari, 0);
 
+                try {
+                    open();
+                    createMsg(msg);
+                    createUser(msg, nom);
+                    close();
+                    contador++;
+                }catch(SQLException e){
+                    Log.d("DEVPAU", e.getMessage());
+                }
+            }
+        }catch(Exception e){
+            Log.d("IntrodueixMsgs DEVPAU", e.getMessage());
+        }
 
         return contador;
     }
