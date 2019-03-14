@@ -20,7 +20,7 @@ public class MissatgeArrayAdapter extends ArrayAdapter<Missatge> {
     TextView datahora;
     TextView msgv;
     View view;
-    FloatingActionButton fab;
+
 
     public MissatgeArrayAdapter(Context context, int resource, ArrayList<Missatge> objects) {
         super(context, resource, objects);
@@ -36,17 +36,12 @@ public class MissatgeArrayAdapter extends ArrayAdapter<Missatge> {
         user = (TextView) view.findViewById(R.id.user);
         datahora = (TextView) view.findViewById(R.id.datahora);
         msgv = (TextView) view.findViewById(R.id.msg);
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
 
         msgv.setText(msg.getMsg());
         datahora.setText(msg.getDatahora());
         user.setText(msg.getUsuari());
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                
-            }
-        });
+
 
         return view;
     }

@@ -49,6 +49,11 @@ Carrega la listview pero se queda travada
 Creada la lògica a datasource per introduir usuaris 
 Ya carrega el nom d'usuari a listview 
 vaig a fer la part d'UI d'enviar missatge
+Ja envia missatges.
+Després d'enviar es missatge carrega sa llista.
+He fet que el teclat es mostri i s'oculti, i que l'edittext s'ajusti a la finestra i agafi el focus en mostrarse. 
+Hi ha molt per optimitzar, però ja fa lo que ha de fer.
+
 
 
 

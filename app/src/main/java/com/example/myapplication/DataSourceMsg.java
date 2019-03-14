@@ -50,6 +50,7 @@ public class DataSourceMsg {
             values.put(HelperQuepassaeh.COLUMN_PENDENT, msg.getPendent());
 
             long insertId = database.insert(HelperQuepassaeh.TABLE_MISSATGE, null, values);
+            Log.d("createmsg DEVPAU  ", "MSG PDT"+insertId);
             msg.setCodi((int) insertId);
             return msg;
         }else{

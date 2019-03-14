@@ -135,7 +135,7 @@ public class Controller {
                 claus.put("msg", missatges.get(i).getMsg());
                 claus.put("codiusuari", Integer.toString(codiusr));
                 String crida = montaParametres(claus);
-                URL obj = new URL("http://iesmantpc.000webhostapp.com/public/missatge/");
+                URL obj = new URL("https://iesmantpc.000webhostapp.com/public/missatge/");
                 HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
                 postConnection.setRequestMethod("POST");
                 postConnection.setRequestProperty("Authorization", token);

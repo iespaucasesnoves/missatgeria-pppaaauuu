@@ -1,23 +1,36 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.StrictMode;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private Preferencies pref;
     private ListView lv;
     final int CLAULOGIN = 2;
+    FloatingActionButton fab;
+    EditText et;
+    Button but;
+    Button can;
     private ArrayList<Missatge> missatges;
     JSONObject jslogin = null;
 
@@ -27,6 +40,53 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         pref = new Preferencies(this);
         lv = findViewById(R.id.llista);
+        et = findViewById(R.id.editText4);
+        but = findViewById(R.id.button);
+        can = findViewById(R.id.button2);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et.setVisibility(View.VISIBLE);
+                but.setVisibility(View.VISIBLE);
+                can.setVisibility(View.VISIBLE);
+                et.requestFocus();
+                InputMethodManager imm = (InputMethodManager)getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(et, 0);
+            }
+        });
+        can.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et.setVisibility(View.INVISIBLE);
+                but.setVisibility(View.INVISIBLE);
+                can.setVisibility(View.INVISIBLE);
+                InputMethodManager imm = (InputMethodManager)getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(et.getWindowToken(), 0);
+                et.setText(" ");
+            }
+        });
+        but.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et.setVisibility(View.INVISIBLE);
+                but.setVisibility(View.INVISIBLE);
+                can.setVisibility(View.INVISIBLE);
+                InputMethodManager imm = (InputMethodManager)getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(et.getWindowToken(), 0);
+                Boolean flag = introduirMissatge(et.getText().toString());
+                if(!flag){
+                    Toast toast = Toast.makeText(getApplicationContext(), "No s'ha pogut enviar", Toast.LENGTH_SHORT);
+                    toast.show();
+                    Log.d("enviarclick DEVPAU", "no enviat");
+                }else{
+                    et.setText(" ");
+                }
+            }
+        });
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         String login = Controller.logIn(pref.getUser(), pref.getPassword());
@@ -53,6 +113,27 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(inte, CLAULOGIN);
         }
 
+    }
+
+    private Boolean introduirMissatge(String text) {
+        Date date = new Date();
+        Missatge msg = new Missatge(-1, text, date.toString(), pref.getCodiusuari(), 1);
+        DataSourceMsg db = new DataSourceMsg(this);
+        try{
+            db.open();
+            msg = db.createMsg(msg);
+            db.close();
+        }catch(Exception e){
+            Log.d("intoduirMis DEVPAU ", e.toString());
+        }
+        if(msg.getCodi() > 0){
+            enviarMissatges();
+            mostraMissatges();
+            Log.d("intoduirMis DEVPAU ", "INTRODUIT msg pdt");
+        }else {
+            Log.d("intoduirMis DEVPAU ", "NO INTRODUIT msg pdt");
+        }
+        return msg.getCodi() > 0;
     }
 
     @Override
@@ -110,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         DataSourceMsg dataSource = new DataSourceMsg(this);
         ArrayList<Missatge> pendents = dataSource.getAllPdt();
         if(pendents != null && pendents.size() > 0)
-        Controller.enviar(missatges, pref.getCodiusuari(), pref.getToken());
+        Controller.enviar(pendents, pref.getCodiusuari(), pref.getToken());
     }
 
 
